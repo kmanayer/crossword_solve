@@ -1,0 +1,1 @@
+javac -classpath .;./Tess4J/dist/*;./Tess4J/lib/* Solver/Crossword.java

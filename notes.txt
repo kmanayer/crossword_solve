@@ -1,0 +1,3 @@
+To do:
+- regex to pull from result and insert into clues
+- figure out how to interface with website

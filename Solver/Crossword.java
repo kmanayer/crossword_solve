@@ -8,6 +8,9 @@ import javax.imageio.*;
 import javax.swing.*;
 import java.util.ArrayList;
 
+import net.sourceforge.tess4j.*;
+
+
 enum Type { ACROSS, DOWN; }	
 
 public class Crossword {
@@ -47,6 +50,17 @@ public class Crossword {
     return;
   }
   
+  private static void extract_clues() {
+    Tesseract instance = new Tesseract();
+    try {
+      String result = instance.doOCR(new File("across.jpg"));
+      System.out.print(result);
+    } catch (Exception e) {
+      System.out.println(e);
+      return;
+    }
+
+  }
   
   public static void main(String[] args) {
     int gray, clue_length;
@@ -64,7 +78,7 @@ public class Crossword {
       System.out.println(e);
       return;
     }
-    
+     
     for (int i = 0 ; i < grid_h ; i++) {
       for (int j = 0 ; j < grid_w ; j++) {
         gray = img_avg(img.getSubimage(cell_w*j, cell_h*i, cell_w, cell_h));
@@ -80,6 +94,7 @@ public class Crossword {
       for (int j = 0 ; j < grid_w ; j++) {
         if ( grid[i][j] == 1 ) {
           continue;
+      // look for cells where down and across clues start
         } else if (( i==0 || grid[i-1][j]==1 ) && ( j==0 || grid[i][j-1]==1)) {
 
           clue_length = 1;
@@ -94,7 +109,7 @@ public class Crossword {
           }
           clues.add(new Clue(clue_count, Type.ACROSS, clue_length, i, j));
           
-
+      // look for cells where down clues start
         } else if ( i==0 || grid[i-1][j]==1 ) {
 
           clue_length = 1;
@@ -103,6 +118,7 @@ public class Crossword {
           }
           clues.add(new Clue(++clue_count, Type.DOWN, clue_length, i, j));
 
+      // look for cells where across clues start
         } else if ( j==0 || grid[i][j-1]==1 ) {
 
           clue_length = 1;
@@ -115,7 +131,7 @@ public class Crossword {
       }
     }
     System.out.println("Clues found: " + clue_count);
-    
+    extract_clues();
   }
 
 }
